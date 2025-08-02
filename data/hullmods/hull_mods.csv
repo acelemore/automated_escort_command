@@ -1,0 +1,14 @@
+name,id,tier,rarity,tech/manufacturer,tags,uiTags,base value,unlocked,hidden,hiddenEverywhere,cost_frigate,cost_dest,cost_cruiser,cost_capital,script,desc,short,sprite
+[AE] 领队 A,automated_escort_leader_A,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.leaders.LeaderTeamA,拥有护卫队A插件的船只将护送本舰,,graphics/automatedescort/leader_a.png
+[AE] 领队 B,automated_escort_leader_B,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.leaders.LeaderTeamB,拥有护卫队B插件的船只将护送本舰,,graphics/automatedescort/leader_b.png
+[AE] 领队 C,automated_escort_leader_C,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.leaders.LeaderTeamC,拥有护卫队C插件的船只将护送本舰,,graphics/automatedescort/leader_c.png
+[AE] 领队 D,automated_escort_leader_D,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.leaders.LeaderTeamD,拥有护卫队D插件的船只将护送本舰,,graphics/automatedescort/leader_d.png
+[AE] 领队 E,automated_escort_leader_E,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.leaders.LeaderTeamE,拥有护卫队E插件的船只将护送本舰,,graphics/automatedescort/leader_e.png
+[AE] 护卫队 A,automated_escort_member_A,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.members.EscortMemberA,安装本插件的船只将护送领队A,,graphics/automatedescort/member_a.png
+[AE] 护卫队 B,automated_escort_member_B,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.members.EscortMemberB,安装本插件的船只将护送领队B,,graphics/automatedescort/member_b.png
+[AE] 护卫队 C,automated_escort_member_C,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.members.EscortMemberC,安装本插件的船只将护送领队C,,graphics/automatedescort/member_c.png
+[AE] 护卫队 D,automated_escort_member_D,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.members.EscortMemberD,安装本插件的船只将护送领队D,,graphics/automatedescort/member_d.png
+[AE] 护卫队 E,automated_escort_member_E,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.members.EscortMemberE,安装本插件的船只将护送领队E,,graphics/automatedescort/member_e.png
+[AE] 轻型护送,automated_escort_level_light,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.levels.EscortLevelLight,最多指派1艘护卫舰进行护送,,graphics/automatedescort/escort_level_light.png
+[AE] 中型护送,automated_escort_level_medium,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.levels.EscortLevelMedium,最多指派2艘护卫舰或1艘驱逐舰进行护送,,graphics/automatedescort/escort_level_mid.png
+[AE] 重型护送,automated_escort_level_heavy,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.levels.EscortLevelHeavy,最多指派4艘护卫舰或2艘驱逐舰或1艘巡洋舰进行护送,,graphics/automatedescort/escort_level_heavy.png

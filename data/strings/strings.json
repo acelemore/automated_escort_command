@@ -1,0 +1,7 @@
+{
+  "AutomatedEscort":{
+    "reason_not_applicable_type_restrict": "只可以安装一种类型的护送插件",
+    "reason_not_applicable_level_not_leader": "只有领队可以安装此插件",
+    "reason_not_applicable_on_capital_ship": "主力舰无法执行护送任务"
+  }
+}
