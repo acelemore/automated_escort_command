@@ -19,6 +19,12 @@ public class EscortLeader extends EscortTeamBase {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
+        if (ship.getOwner() != 0) {
+            // 只对玩家舰队的船生效
+            return;
+        }
+
+
         if (Global.getCombatEngine().isCombatOver()) {
             return;
         }

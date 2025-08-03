@@ -1,0 +1,7 @@
+{
+  "AutomatedEscort":{
+    "reason_not_applicable_type_restrict": "Only one escort mod type can be installed",
+    "reason_not_applicable_level_not_leader": "Only ships with Leader mods can install this mod",
+    "reason_not_applicable_on_capital_ship": "Capital ships cannot perform escort missions"
+  }
+}
