@@ -37,6 +37,15 @@
             <systemPath>${project.basedir}/lib/starsector-core/starfarer_obf.jar</systemPath>
         </dependency>
 
+        <!-- LazyLib API -->
+        <dependency>
+            <groupId>lazywizard</groupId>
+            <artifactId>lazywizard</artifactId>
+            <version>3.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/LazyLib/jars/LazyLib.jar</systemPath>
+        </dependency>
+
 
         <!-- JSON Library -->
         <dependency>

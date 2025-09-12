@@ -12,3 +12,4 @@ name,id,tier,rarity,tech/manufacturer,tags,uiTags,base value,unlocked,hidden,hid
 [AE] 轻型护送,automated_escort_level_light,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.levels.EscortLevelLight,最多指派1艘护卫舰进行护送,,graphics/automatedescort/escort_level_light.png
 [AE] 中型护送,automated_escort_level_medium,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.levels.EscortLevelMedium,最多指派2艘护卫舰或1艘驱逐舰进行护送,,graphics/automatedescort/escort_level_mid.png
 [AE] 重型护送,automated_escort_level_heavy,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.levels.EscortLevelHeavy,最多指派4艘护卫舰或2艘驱逐舰或1艘巡洋舰进行护送,,graphics/automatedescort/escort_level_heavy.png
+[AE]支援单位,automated_support_unit,,,自动护航,"no_built_in, automated",,,TRUE,,,0,0,0,0,data.hullmods.SupportUnit,装配此船插的舰船将远离前线,,graphics/automatedescort/support.png

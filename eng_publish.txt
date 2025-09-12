@@ -1,0 +1,62 @@
+It's so annoying having to manually assign escort ships to those naked Dominators every battle.
+
+Even worse when an escort gets destroyed and the system automatically pulls a Hyperion from the frontline to escort the Dominator instead.
+
+
+So I made this MOD, inspired by "Automated Commands", adding some none-cost hullmods to automatically issue escort orders at battle start and prevent unreasonable escort assignments after losses.
+
+[list]
+[li]After installation, you'll find new hullmods in the refit screen[/li]
+[li]Ships with [b]"Leader"[/b] hullmod are the ones to be escorted[/li]
+[li]Ships with [b]"Escort Team"[/b] hullmod are the escorts[/li]
+[li]They'll match by letter designation (A~E)[/li]
+[li]Multiple Leaders with same letter will share escorts evenly[/li]
+[/list]
+
+When losses occur:
+[list]
+[li]The system searches for qualified allies (not player-controlled, idle, with matching escort hullmod)[/li]
+[li]Adds them to escort duty[/li]
+[li]If no valid escorts remain, cancels the assignment[/li]
+[li]Prevents the system from assigning random ships[/li]
+[/list]
+
+Three escort scale hullmods:
+[list]
+[li][b]Light Escort[/b]: 1 frigate maximum[/li]
+[li][b]Medium Escort[/b]: Up to destroyers[/li]
+[li][b]Heavy Escort[/b]: 1 cruiser or 4 frigates or 2 destoryers maximum[/li]
+[/list]
+No larger scales - impractical (normally a capital ship only needs 1 destroyer escort). Without these scale hullmods, defaults are:
+[list]
+[li]Capital ships: Heavy[/li]
+[li]Cruisers: Medium[/li]
+[li]Destroyers/Frigates: Light[/li]
+[/list]
+
+[url=https://ibb.co/8nk7z2hM][img]https://i.ibb.co/20Jk8Pbq/QQ-20250803101558.jpg[/img][/url]
+[url=https://ibb.co/mFJHStb4][img]https://i.ibb.co/Fq6BnJmz/QQ-20250803101611.jpg[/img][/url]
+[url=https://ibb.co/SwzX5wfy][img]https://i.ibb.co/23T7W3Zh/QQ-20250803101622.jpg[/img][/url]
+
+Example: Install these hullmods to auto-link ships at battle start - no more manual map hunting or worrying about the system dragging frontline frigates back when escorts die.
+
+[b]Important Notes:[/b]
+[list]
+[li]1. 10-second delay after deployment before assignments begin (reduces initial crowding)[/li]
+
+[li]2. [b]"Leader"[/b] hullmod overrides [b]ALL[/b] other escort commands (including manual player orders)[/li]
+[list]
+[li]Example: Manually assigning ships without "escort" mod or exceeding escort limits will be auto-cleared[/li]
+[li]Because I can't find an API to distinguish player/system assignments[/li]
+[li]Temporary disable: Select leader ship, press [b]D (Defend)[/b], then cancel - disables for current battle[/li]
+[/list]
+
+[li]3. Added via hullmods - can join existing saves anytime[/li]
+[list]
+[li][b]NOT safe to remove[/b] - must remove all modded hullmods first[/li]
+[/list]
+
+[li]4. No known mod conflicts - works with AI tweak mod[/li]
+[/list]
+
+Download → [url=https://github.com/acelemore/automated_escort_command/releases/download/v1.0.0/AutomatedEscortsEn.zip]https://github.com/acelemore/automated_escort_command/releases/download/v1.0.0/AutomatedEscortsEn.zip[/url]  ← Download

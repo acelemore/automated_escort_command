@@ -181,7 +181,9 @@ public class EscortLeader extends EscortTeamBase {
             int memberEscortScore = (int)deployedShip.getCustomData().getOrDefault(EscortDataKeys.MEMBER_ESCORT_SCORE.getValue(), 0);
             if (memberEscortScore > 0 && memberEscortScore <= needScore) {
                 var shipAssignment = taskManager.getAssignmentFor(deployedShip);
-                if (shipAssignment != null && shipAssignment.getType() != CombatAssignmentType.SEARCH_AND_DESTROY) {
+                if (shipAssignment != null && 
+                shipAssignment.getType() != CombatAssignmentType.SEARCH_AND_DESTROY && shipAssignment.getType() != CombatAssignmentType.CAPTURE &&
+                shipAssignment.getType() != CombatAssignmentType.CONTROL) {
                     // 当前已被指派其他任务
                     continue;
                 }
