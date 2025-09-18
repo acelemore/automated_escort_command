@@ -5,13 +5,15 @@ import org.apache.log4j.Logger;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.*;
+import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 
 
 public class EscortLeader extends EscortTeamBase {
-    private static final float LEADER_UPDATE_INTERVAL = 1f; // 先每秒运行看看效率
+    private final IntervalUtil updateTimer = new IntervalUtil(0.5f, 1f);
+    private final IntervalUtil combatStartTimer = new IntervalUtil(10f, 15f);
+    private boolean combatStartAfterDelay = false;
     private static final Logger LOGGER = Global.getLogger(EscortLeader.class);
-    private static final float ASSIGN_DELAY = 10f; // 开场10秒后再开始分配任务, 免得船挤在一块
 
     public EscortLeader(String _team) {
         this.team = _team;
@@ -24,8 +26,22 @@ public class EscortLeader extends EscortTeamBase {
             return;
         }
 
-
         if (Global.getCombatEngine().isCombatOver()) {
+            combatStartAfterDelay = false;
+            return;
+        }
+
+        if (!combatStartAfterDelay) {
+            combatStartTimer.advance(amount);
+            if (combatStartTimer.intervalElapsed()) {
+                combatStartAfterDelay = true;
+            } else {
+                return;
+            }
+        }
+
+        updateTimer.advance(amount);
+        if (!updateTimer.intervalElapsed()) {
             return;
         }
 
@@ -38,20 +54,7 @@ public class EscortLeader extends EscortTeamBase {
         if (leaderFleetMember == null) {
             return; // 没有部署的舰船
         }
-        float firstDeployTime = (float)ship.getCustomData().getOrDefault(EscortDataKeys.LEADER_FIRST_DEPLOY_TIME.getValue(), 0f);
-        if (firstDeployTime == 0f) {
-            // 第一次部署, 记录时间(包括暂停)
-            ship.setCustomData(EscortDataKeys.LEADER_FIRST_DEPLOY_TIME.getValue(), Global.getCombatEngine().getTotalElapsedTime(true));
-            return;
-        } else if (Global.getCombatEngine().getTotalElapsedTime(true) - firstDeployTime < ASSIGN_DELAY) {
-            // 还没到分配任务的时间
-            return;
-        }
-
-        float lastUpdate = (float)ship.getCustomData().getOrDefault(EscortDataKeys.LEADER_LAST_UPDATE.getValue(), 0f);
-        if (Global.getCombatEngine().getTotalElapsedTime(false) - lastUpdate < LEADER_UPDATE_INTERVAL) {
-            return;
-        }
+        
         ship.setCustomData(EscortDataKeys.LEADER_LAST_UPDATE.getValue(), Global.getCombatEngine().getTotalElapsedTime(false));
         int escortScore = (int)Global.getCombatEngine().getCustomData().getOrDefault(EscortDataKeys.LEADER_ESCORT_SCORE.getValue(), -1);
         if (escortScore == -1) {
@@ -181,9 +184,10 @@ public class EscortLeader extends EscortTeamBase {
             int memberEscortScore = (int)deployedShip.getCustomData().getOrDefault(EscortDataKeys.MEMBER_ESCORT_SCORE.getValue(), 0);
             if (memberEscortScore > 0 && memberEscortScore <= needScore) {
                 var shipAssignment = taskManager.getAssignmentFor(deployedShip);
-                if (shipAssignment != null && 
-                shipAssignment.getType() != CombatAssignmentType.SEARCH_AND_DESTROY && shipAssignment.getType() != CombatAssignmentType.CAPTURE &&
-                shipAssignment.getType() != CombatAssignmentType.CONTROL) {
+                if (shipAssignment != null 
+                && shipAssignment.getType() != CombatAssignmentType.SEARCH_AND_DESTROY 
+                && shipAssignment.getType() != CombatAssignmentType.CAPTURE 
+                && shipAssignment.getType() != CombatAssignmentType.CONTROL) {
                     // 当前已被指派其他任务
                     continue;
                 }
@@ -196,6 +200,22 @@ public class EscortLeader extends EscortTeamBase {
                     // 不是同一队的
                     continue;
                 }
+
+                // 尽可能优先给目前没有护卫的船分配
+                if (currentScore > 0) {
+                    var deployedShipScoreTag = (int)deployedShip.getCustomData().getOrDefault(EscortDataKeys.LEADER_ACQUIRE_PRIORITY.getValue(), -1);
+                    if (deployedShipScoreTag == -1) {
+                        // 还没被标记过, 标记上, 然后略过此船
+                        deployedShip.setCustomData(EscortDataKeys.LEADER_ACQUIRE_PRIORITY.getValue(), currentScore);
+                        continue;
+                    }
+                    if (deployedShipScoreTag < currentScore) {
+                        // 说明有其他船更需要这个护卫
+                        continue;
+                    }
+                    // 如果要做到完全的平均分配, 需要更复杂的代码, 但目前感觉没有必要, 优先填充没有护卫的船已经足够
+                }
+
                 // 计算距离
                 var distance = Misc.getDistanceSq(deployedShip.getLocation(), ship.getLocation());
                 if (distance < minDistance) {

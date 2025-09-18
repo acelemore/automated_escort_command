@@ -47,7 +47,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
                 if(currentRallyPoint != null && MathUtils.getDistance(currentRallyPoint, newRallyPoint) < 300f) {
                     return;
                 }
-                makeRallyPointAssignment(ship, currentRallyPoint);
+                makeRallyPointAssignment(ship, newRallyPoint);
                 LOGGER.info("SupportUnit: New rally point assigned for ship " + ship.getName() + " at " + newRallyPoint);
             } else {
                 LOGGER.warn("SupportUnit: No rally point found for ship " + ship.getName());
@@ -182,7 +182,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         
         // 第一步：找出最合适的友军
         DeployedFleetMemberAPI bestMatchAlly = null;
-        float bestScore = 0;
+        float bestScore = Float.MAX_VALUE;
         
         for (var allyMember : allyFleet) {
             if (allyMember == null || allyMember.getShip() == null) {
@@ -192,7 +192,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
             if (!allyShip.isAlive() || allyShip == ship) {
                 continue;
             }
-            
+
             // 计算舰船尺寸乘数
             float sizeMultiplier = 1f;
             switch (allyShip.getHullSize()) {
@@ -209,7 +209,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
                     sizeMultiplier = 8f;
                     break;
                 case FIGHTER:
-                    sizeMultiplier = 0f; // 忽略战机
+                    sizeMultiplier = 0.00001f; // 忽略战机
                     break;
                 case DEFAULT:
                 default:
@@ -221,9 +221,9 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
             float distance = MathUtils.getDistance(ship, allyShip);
             
             // 计算得分
-            float score = distance * sizeMultiplier;
+            float score = distance / sizeMultiplier;
             
-            if (score > bestScore) {
+            if (score < bestScore) { // 分数越低越好(距离越近, 舰船尺寸越大越好)
                 bestScore = score;
                 bestMatchAlly = allyMember;
             }

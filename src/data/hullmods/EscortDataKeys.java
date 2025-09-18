@@ -7,6 +7,7 @@ public enum EscortDataKeys {
     LEADER_CURRENT_ASSIGNMENT_INFO("escort_leader_current_assignment_info"),
     LEADER_CANCLE_CUSTOM_ESCORT("escort_leader_cancel_custom_escort"),
     LEADER_FIRST_DEPLOY_TIME("escort_leader_first_deploy_time"),
+    LEADER_ACQUIRE_PRIORITY("escort_leader_acquire_priority"),
     MEMBER_ESCORT_SCORE("escort_member_escort_score"),
     ESCORT_TEAM("escort_team"),
     MSG_STRING_KEY("AutomatedEscort"),
