@@ -1,5 +1,5 @@
-package data.hullmods.levels;
-import data.hullmods.EscortLevel;
+package com.lemore.data.hullmods.levels;
+import com.lemore.data.hullmods.EscortLevel;
 
 public class EscortLevelLight extends EscortLevel {
     public EscortLevelLight() {

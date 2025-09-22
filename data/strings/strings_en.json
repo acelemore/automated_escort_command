@@ -2,6 +2,9 @@
   "AutomatedEscort":{
     "reason_not_applicable_type_restrict": "Only one escort mod type can be installed",
     "reason_not_applicable_level_not_leader": "Only ships with Leader mods can install this mod",
-    "reason_not_applicable_on_capital_ship": "Capital ships cannot perform escort missions"
+    "reason_not_applicable_on_capital_ship": "Capital ships cannot perform escort missions",
+    "combat_log_pulling_back": "Enemy contact, regrouping with allies: ",
+    "combat_log_returning_to_action": "Withdrawn from frontline, maneuvering to re-engage",
+    "automated_escort_msg": "En route to escort target: "
   }
 }

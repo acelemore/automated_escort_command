@@ -1,6 +1,8 @@
-package data.hullmods;
+package com.lemore.data.hullmods;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.lemore.data.utils.Constant;
+import com.lemore.data.utils.Local;
 
 public class EscortLevel extends com.fs.starfarer.api.combat.BaseHullMod {
     protected int level = 1;
@@ -11,8 +13,8 @@ public class EscortLevel extends com.fs.starfarer.api.combat.BaseHullMod {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
-        if (!ship.getCustomData().containsKey(EscortDataKeys.LEADER_ESCORT_SCORE.getValue())) {
-            ship.setCustomData(EscortDataKeys.LEADER_ESCORT_SCORE.getValue(), level);
+        if (!ship.getCustomData().containsKey(Constant.LEADER_ESCORT_SCORE)) {
+            ship.setCustomData(Constant.LEADER_ESCORT_SCORE, level);
         }
     }
 
@@ -46,7 +48,7 @@ public class EscortLevel extends com.fs.starfarer.api.combat.BaseHullMod {
             case "medium":
                 return 2;
             case "heavy":
-                return 3;
+                return 4;
             default:
                 return -1;
         }
@@ -71,12 +73,10 @@ public class EscortLevel extends com.fs.starfarer.api.combat.BaseHullMod {
             }
         }
         if (!isLeader) {
-            return Global.getSettings().getString(EscortDataKeys.MSG_STRING_KEY.getValue(),
-                    EscortDataKeys.MSG_NOT_LEADER.getValue());
+            return Local.getString(Constant.MSG_NOT_LEADER);
         }
         if (hasOtherLevel) {
-            return Global.getSettings().getString(EscortDataKeys.MSG_STRING_KEY.getValue(),
-                    EscortDataKeys.MSG_TYPE_RESTRICT.getValue());
+            return Local.getString(Constant.MSG_TYPE_RESTRICT);
         }
         return "should not reach here";
     }

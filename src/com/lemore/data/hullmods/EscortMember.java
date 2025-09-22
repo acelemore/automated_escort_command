@@ -1,9 +1,10 @@
-package data.hullmods;
+package com.lemore.data.hullmods;
 import org.apache.log4j.Logger;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.*;
-import com.fs.starfarer.api.util.Misc;
+import com.lemore.data.utils.Constant;
+import com.lemore.data.utils.Local;
 
 public class EscortMember extends EscortTeamBase {
     private static final Logger LOGGER = Global.getLogger(EscortMember.class);
@@ -16,7 +17,7 @@ public class EscortMember extends EscortTeamBase {
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
         // 好像没提供初始化的接口, 只能每帧都设置了
-        if (!ship.getCustomData().containsKey(EscortDataKeys.MEMBER_ESCORT_SCORE.getValue())) {
+        if (!ship.getCustomData().containsKey(Constant.MEMBER_ESCORT_SCORE)) {
             ShipAPI.HullSize hullSize = ship.getHullSize();
             int escortScore;
             switch (hullSize) {
@@ -32,8 +33,8 @@ public class EscortMember extends EscortTeamBase {
                 default:
                     escortScore = 0; // 其他舰种无效
             }
-            ship.setCustomData(EscortDataKeys.MEMBER_ESCORT_SCORE.getValue(), escortScore);
-            ship.setCustomData(EscortDataKeys.ESCORT_TEAM.getValue(), team);
+            ship.setCustomData(Constant.MEMBER_ESCORT_SCORE, escortScore);
+            ship.setCustomData(Constant.MEMBER_ESCORT_TEAM, team);
             LOGGER.info("Initialized escort score for ship: " + ship + " with score: " + escortScore + " and team: " + team);
         }
     }
@@ -65,10 +66,8 @@ public class EscortMember extends EscortTeamBase {
     public String getUnapplicableReason(ShipAPI ship) {
         var shipSize = ship.getHullSize();
         if (shipSize == ShipAPI.HullSize.CAPITAL_SHIP) {
-            return Global.getSettings().getString(EscortDataKeys.MSG_STRING_KEY.getValue(),
-                    EscortDataKeys.MSG_NOT_APPLICABLE_ON_CAPITAL_SHIP.getValue());
+            return Local.getString(Constant.MSG_NOT_APPLICABLE_ON_CAPITAL_SHIP);
         }
-        return Global.getSettings().getString(EscortDataKeys.MSG_STRING_KEY.getValue(),
-                EscortDataKeys.MSG_TYPE_RESTRICT.getValue());
+        return Local.getString(Constant.MSG_TYPE_RESTRICT);
     }
 }

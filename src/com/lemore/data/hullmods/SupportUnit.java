@@ -1,4 +1,4 @@
-package data.hullmods;
+package com.lemore.data.hullmods;
 import java.util.HashSet;
 
 import org.apache.log4j.Logger;
@@ -6,6 +6,9 @@ import org.apache.log4j.Logger;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.util.IntervalUtil;
+import com.lemore.data.utils.CombatLog;
+import com.lemore.data.utils.Constant;
+import com.lemore.data.utils.Local;
 import com.fs.starfarer.api.mission.FleetSide;
 import org.lazywizard.lazylib.combat.AIUtils;
 import org.lwjgl.util.vector.Vector2f;
@@ -13,8 +16,10 @@ import org.lazywizard.lazylib.MathUtils;
 
 
 
+
 public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
     private record AssignmentKey(ShipAPI ship, AssignmentTargetAPI target, CombatAssignmentType assignmentType) {}
+    private record RallyPointResult(Vector2f rallyPoint, ShipAPI allyShip) {}
     private static final Logger LOGGER = Global.getLogger(SupportUnit.class);
     private final IntervalUtil timer = new IntervalUtil(0.5f, 1f);
     private HashSet<AssignmentKey> generateAssignments = new HashSet<>();
@@ -41,21 +46,39 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         }
 
         if (isInDanger(ship)) {
-            var newRallyPoint = findRallyPoint(ship);
-            if (newRallyPoint != null) {
+            var rallyResult = findRallyPoint(ship);
+            if (rallyResult != null) {
+                var newRallyPoint = rallyResult.rallyPoint();
+                var targetAlly = rallyResult.allyShip();
                 var currentRallyPoint = getCurrentRallyPoint(ship);
                 if(currentRallyPoint != null && MathUtils.getDistance(currentRallyPoint, newRallyPoint) < 300f) {
                     return;
                 }
                 makeRallyPointAssignment(ship, newRallyPoint);
-                LOGGER.info("SupportUnit: New rally point assigned for ship " + ship.getName() + " at " + newRallyPoint);
+                LOGGER.info("SupportUnit: New rally point assigned for ship " + ship.getName() + " at " + newRallyPoint + ", target ally: " + targetAlly.getName());
+                var myName = CombatLog.getShipName(ship);
+                var allyName = CombatLog.getShipName(targetAlly);
+                var myMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(ship);
+                var allyMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(targetAlly);
+                Object[] args = new Object[] {
+                    myMember,
+                    CombatLog.FRIEND_COLOR, myName,
+                    CombatLog.TEXT_COLOR, ": ",
+                    CombatLog.HIGHLIGHT_COLOR, Local.getString(Constant.COMBAT_LOG_PULLING_BACK),
+                    allyMember,
+                    CombatLog.FRIEND_COLOR, allyName
+                };
+                Global.getCombatEngine().getCombatUI().addMessage(1, args);
+
             } else {
                 LOGGER.warn("SupportUnit: No rally point found for ship " + ship.getName());
                 return;
             }
         } else {
             // 不在危险中, 清除当前的指派
-            clearCurrentAssignment(ship);
+            if (clearCurrentAssignment(ship)) {
+                CombatLog.addLog(ship, Local.getString(Constant.COMBAT_LOG_RETURNING_TO_ACTION));
+            }
         }
     }
 
@@ -120,7 +143,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         return false;
     }
 
-    private void clearCurrentAssignment(ShipAPI ship) {
+    private boolean clearCurrentAssignment(ShipAPI ship) {
         var fleetManager = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER);
         var taskManager =  fleetManager.getTaskManager(false);
         var currentAssginmentInfo = taskManager.getAssignmentFor(ship);
@@ -133,11 +156,13 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
                     taskManager.removeAssignment(currentAssginmentInfo);
                     Global.getCombatEngine().removeObject(target);
                     generateAssignments.remove(key);
+                    return true;
                 } else {
-                    return; // 说明是玩家的直接指派
+                    return false; // 说明是玩家的直接指派
                 }
             } 
         }
+        return false;
     }
 
     private void makeRallyPointAssignment(ShipAPI ship, Vector2f rallyPoint) {
@@ -177,7 +202,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         generateAssignments.add(key);
     }
 
-    private Vector2f findRallyPoint(ShipAPI ship) {
+    private RallyPointResult findRallyPoint(ShipAPI ship) {
         var allyFleet = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedCopyDFM();
         
         // 第一步：找出最合适的友军
@@ -263,11 +288,11 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         
         if (mostThreateningEnemy == null) {
             // 没有找到威胁敌军，返回友军位置作为集合点
-            return new Vector2f(allyShip.getLocation());
+            return new RallyPointResult(new Vector2f(allyShip.getLocation()), allyShip);
         }
         
         // 第三步：计算集合点位置
-        // 以敌军和友军位置做连线，友军位置后方500的位置为集合点
+        // 以敌军和友军位置做连线，友军位置后方300的位置为集合点
         Vector2f enemyPos = mostThreateningEnemy.getLocation();
         Vector2f allyPos = allyShip.getLocation();
         
@@ -280,6 +305,6 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         rallyPoint.x += direction.x * 300f;
         rallyPoint.y += direction.y * 300f;
         
-        return rallyPoint;
+        return new RallyPointResult(rallyPoint, allyShip);
     }
 }

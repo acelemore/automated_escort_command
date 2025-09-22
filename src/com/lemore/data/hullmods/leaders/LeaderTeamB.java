@@ -1,6 +1,6 @@
-package data.hullmods.leaders;
+package com.lemore.data.hullmods.leaders;
 
-import data.hullmods.EscortLeader;
+import com.lemore.data.hullmods.EscortLeader;
 
 public class LeaderTeamB extends EscortLeader {
     public LeaderTeamB() {

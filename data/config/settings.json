@@ -1,0 +1,5 @@
+{
+    "plugins": {
+        "com.lemore.data.plugins.AutomatedEscortCombatPlugin": "com.lemore.data.plugins.AutomatedEscortCombatPlugin"
+    },
+}
