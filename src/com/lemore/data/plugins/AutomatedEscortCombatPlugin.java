@@ -28,7 +28,7 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin {
     private static final Logger LOGGER = Global.getLogger(EscortMember.class);
     private final IntervalUtil updateTimer = new IntervalUtil(1f, 2f);
     private static CombatEngineAPI combatEngine = null;
-    private float combatBeginTime = -1f;
+    private static float combatBeginTime = -1f;
     private static CombatFleetManagerAPI playerFleetManager = null;
     private static CombatTaskManagerAPI playerTaskManager = null;
     private static WeakHashMap<AssignmentInfo, Boolean> managedTasks = new WeakHashMap<>();
@@ -83,6 +83,7 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin {
 
         var deployedMembers = playerFleetManager.getDeployedCopyDFM();
         if (deployedMembers.isEmpty()) {
+            combatBeginTime = -1f;
             return;
         } else {
             if (combatBeginTime < 0f) {
