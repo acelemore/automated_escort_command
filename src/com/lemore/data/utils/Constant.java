@@ -5,6 +5,7 @@ public class Constant {
     public static final String LEADER_ESCORT_TEAM = "escort_leader_escort_team";
     public static final String MEMBER_ESCORT_SCORE = "escort_member_escort_score";
     public static final String MEMBER_ESCORT_TEAM = "escort_member_escort_team";
+    public static final String SUPPORT_UNIT_LAST_ALLY = "support_unit_last_ally";
     public static final String MSG_TYPE_RESTRICT = "reason_not_applicable_type_restrict";
     public static final String MSG_NOT_LEADER = "reason_not_applicable_level_not_leader";
     public static final String MSG_NOT_APPLICABLE_ON_CAPITAL_SHIP = "reason_not_applicable_on_capital_ship";

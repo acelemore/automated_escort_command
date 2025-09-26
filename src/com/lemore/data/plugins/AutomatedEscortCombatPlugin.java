@@ -24,11 +24,11 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 
 
-public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin, FleetMemberDeploymentListener {
+public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin {
     private static final Logger LOGGER = Global.getLogger(EscortMember.class);
     private final IntervalUtil updateTimer = new IntervalUtil(1f, 2f);
     private static CombatEngineAPI combatEngine = null;
-    private static float combatBeginTime = 0f;
+    private float combatBeginTime = -1f;
     private static CombatFleetManagerAPI playerFleetManager = null;
     private static CombatTaskManagerAPI playerTaskManager = null;
     private static WeakHashMap<AssignmentInfo, Boolean> managedTasks = new WeakHashMap<>();
@@ -55,16 +55,17 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin, Flee
 	public void init(CombatEngineAPI engine) {
 		LOGGER.info("AutomatedEscortCombatPlugin initialized. Time: " + engine.getTotalElapsedTime(true));
         combatEngine = engine;
-        combatEngine.getListenerManager().addListener(this);
         playerFleetManager = combatEngine.getFleetManager(FleetSide.PLAYER);
         playerTaskManager = playerFleetManager.getTaskManager(false);
+        combatBeginTime = -1f;
 	}
 
 	@Override
 	public void advance(float amount, java.util.List<com.fs.starfarer.api.input.InputEventAPI> events) {
         if (combatEngine.isCombatOver()) {
-            LOGGER.info("Combat over, resetting state.");
+            // LOGGER.info("Combat over, resetting state.");
             managedTasks.clear();
+            combatBeginTime = -1;
             return;
         }
 
@@ -79,6 +80,16 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin, Flee
 
         // 护卫任务管理, 全部将权重置为0, 阻止系统自动分配
         managerTasks();
+
+        var deployedMembers = playerFleetManager.getDeployedCopyDFM();
+        if (deployedMembers.isEmpty()) {
+            return;
+        } else {
+            if (combatBeginTime < 0f) {
+                combatBeginTime = combatEngine.getTotalElapsedTime(false);
+                LOGGER.info("Combat begin time recorded: " + combatBeginTime);
+            }
+        }
 
 		var currentTime = combatEngine.getTotalElapsedTime(false);
         if (combatBeginTime > 0f && currentTime - combatBeginTime < 10f) {
@@ -100,7 +111,7 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin, Flee
                 if (!managedTasks.containsKey(task)) {
                     playerTaskManager.setAssignmentWeight(task, 0);
                     managedTasks.put(task, true);
-                    LOGGER.info("Managed Task Type: " + task.getType() + ", Weight set to 0");
+                    // LOGGER.info("Managed Task Type: " + task.getType() + ", Weight set to 0");
                 }
             }
         }
@@ -197,7 +208,7 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin, Flee
         // 排序：可以护卫的按分数从大到小排序（优先分配高分护卫）
         canEscorts.sort((a, b) -> Integer.compare(b.second, a.second));
         
-        LOGGER.info("Found " + needEscorts.size() + " ships need escort, " + canEscorts.size() + " ships can escort");
+        // LOGGER.info("Found " + needEscorts.size() + " ships need escort, " + canEscorts.size() + " ships can escort");
         
         // 处理护卫分配 - 每次循环只为每艘需要护卫的船分配一个最佳候选
         for (Tri<DeployedFleetMemberAPI, Integer, Integer> needPair : needEscorts) {
@@ -325,15 +336,4 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin, Flee
 		return;
 	}
 
-	@Override
-	public void reportFleetMemberDeployed(DeployedFleetMemberAPI member) {
-		// 检查部署的舰船是否属于玩家
-		if (member.getOwner() == 0) { // 0 玩家
-			LOGGER.info("Player fleet member deployed: " + member.getMember().getShipName());
-            if (combatBeginTime == 0f) {
-                combatBeginTime = combatEngine.getTotalElapsedTime(false);
-                LOGGER.info("Combat begin time recorded: " + combatBeginTime);
-            }
-		}
-	}
 }

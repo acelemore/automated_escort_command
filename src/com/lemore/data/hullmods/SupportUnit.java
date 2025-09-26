@@ -54,22 +54,26 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
                 if(currentRallyPoint != null && MathUtils.getDistance(currentRallyPoint, newRallyPoint) < 300f) {
                     return;
                 }
+                var lastAlly = (ShipAPI)ship.getCustomData().getOrDefault(Constant.SUPPORT_UNIT_LAST_ALLY, null);
                 makeRallyPointAssignment(ship, newRallyPoint);
+                ship.setCustomData(Constant.SUPPORT_UNIT_LAST_ALLY, targetAlly);
+
                 LOGGER.info("SupportUnit: New rally point assigned for ship " + ship.getName() + " at " + newRallyPoint + ", target ally: " + targetAlly.getName());
                 var myName = CombatLog.getShipName(ship);
                 var allyName = CombatLog.getShipName(targetAlly);
                 var myMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(ship);
                 var allyMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(targetAlly);
-                Object[] args = new Object[] {
-                    myMember,
-                    CombatLog.FRIEND_COLOR, myName,
-                    CombatLog.TEXT_COLOR, ": ",
-                    CombatLog.HIGHLIGHT_COLOR, Local.getString(Constant.COMBAT_LOG_PULLING_BACK),
-                    allyMember,
-                    CombatLog.FRIEND_COLOR, allyName
-                };
-                Global.getCombatEngine().getCombatUI().addMessage(1, args);
-
+                if (lastAlly == null || lastAlly != targetAlly) {
+                    Object[] args = new Object[] {
+                        myMember,
+                        CombatLog.FRIEND_COLOR, myName,
+                        CombatLog.TEXT_COLOR, ": ",
+                        CombatLog.HIGHLIGHT_COLOR, Local.getString(Constant.COMBAT_LOG_PULLING_BACK),
+                        allyMember,
+                        CombatLog.FRIEND_COLOR, allyName
+                    };
+                    Global.getCombatEngine().getCombatUI().addMessage(1, args);
+                }
             } else {
                 LOGGER.warn("SupportUnit: No rally point found for ship " + ship.getName());
                 return;
@@ -78,6 +82,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
             // 不在危险中, 清除当前的指派
             if (clearCurrentAssignment(ship)) {
                 CombatLog.addLog(ship, Local.getString(Constant.COMBAT_LOG_RETURNING_TO_ACTION));
+                ship.removeCustomData(Constant.SUPPORT_UNIT_LAST_ALLY);
             }
         }
     }
@@ -218,6 +223,11 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
                 continue;
             }
 
+            var hullmods = allyShip.getVariant().getHullMods();
+            if (hullmods.contains("automated_support_unit")) {
+                continue; // 忽略其他支援单位
+            }
+
             // 计算舰船尺寸乘数
             float sizeMultiplier = 1f;
             switch (allyShip.getHullSize()) {
@@ -234,16 +244,22 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
                     sizeMultiplier = 8f;
                     break;
                 case FIGHTER:
-                    sizeMultiplier = 0.00001f; // 忽略战机
+                    sizeMultiplier = 0f; // 忽略战机
                     break;
                 case DEFAULT:
                 default:
-                    sizeMultiplier = 1f;
+                    sizeMultiplier = 0f;
                     break;
+            }
+            if (sizeMultiplier <= 0f) {
+                continue; // 忽略战机和未知尺寸
             }
             
             // 计算距离
             float distance = MathUtils.getDistance(ship, allyShip);
+            if (distance < 500f) {
+                distance = 500f; 
+            }
             
             // 计算得分
             float score = distance / sizeMultiplier;
@@ -300,10 +316,10 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         Vector2f direction = Vector2f.sub(allyPos, enemyPos, null);
         direction.normalise();
         
-        // 在友军后方300单位处设置集合点
+        // 在友军后方1000单位处设置集合点
         Vector2f rallyPoint = new Vector2f(allyPos);
-        rallyPoint.x += direction.x * 300f;
-        rallyPoint.y += direction.y * 300f;
+        rallyPoint.x += direction.x * 1000f;
+        rallyPoint.y += direction.y * 1000f;
         
         return new RallyPointResult(rallyPoint, allyShip);
     }
