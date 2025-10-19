@@ -54,26 +54,26 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
                 if(currentRallyPoint != null && MathUtils.getDistance(currentRallyPoint, newRallyPoint) < 300f) {
                     return;
                 }
-                var lastAlly = (ShipAPI)ship.getCustomData().getOrDefault(Constant.SUPPORT_UNIT_LAST_ALLY, null);
+                // var lastAlly = (ShipAPI)ship.getCustomData().getOrDefault(Constant.SUPPORT_UNIT_LAST_ALLY, null);
                 makeRallyPointAssignment(ship, newRallyPoint);
                 ship.setCustomData(Constant.SUPPORT_UNIT_LAST_ALLY, targetAlly);
 
-                LOGGER.info("SupportUnit: New rally point assigned for ship " + ship.getName() + " at " + newRallyPoint + ", target ally: " + targetAlly.getName());
-                var myName = CombatLog.getShipName(ship);
-                var allyName = CombatLog.getShipName(targetAlly);
-                var myMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(ship);
-                var allyMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(targetAlly);
-                if (lastAlly == null || lastAlly != targetAlly) {
-                    Object[] args = new Object[] {
-                        myMember,
-                        CombatLog.FRIEND_COLOR, myName,
-                        CombatLog.TEXT_COLOR, ": ",
-                        CombatLog.HIGHLIGHT_COLOR, Local.getString(Constant.COMBAT_LOG_PULLING_BACK),
-                        allyMember,
-                        CombatLog.FRIEND_COLOR, allyName
-                    };
-                    Global.getCombatEngine().getCombatUI().addMessage(1, args);
-                }
+                // LOGGER.info("SupportUnit: New rally point assigned for ship " + ship.getName() + " at " + newRallyPoint + ", target ally: " + targetAlly.getName());
+                // var myName = CombatLog.getShipName(ship);
+                // var allyName = CombatLog.getShipName(targetAlly);
+                // var myMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(ship);
+                // var allyMember = Global.getCombatEngine().getFleetManager(FleetSide.PLAYER).getDeployedFleetMember(targetAlly);
+                // if (lastAlly == null || lastAlly != targetAlly) {
+                //     Object[] args = new Object[] {
+                //         myMember,
+                //         CombatLog.FRIEND_COLOR, myName,
+                //         CombatLog.TEXT_COLOR, ": ",
+                //         CombatLog.HIGHLIGHT_COLOR, Local.getString(Constant.COMBAT_LOG_PULLING_BACK),
+                //         allyMember,
+                //         CombatLog.FRIEND_COLOR, allyName
+                //     };
+                //     Global.getCombatEngine().getCombatUI().addMessage(1, args);
+                // }
             } else {
                 LOGGER.warn("SupportUnit: No rally point found for ship " + ship.getName());
                 return;
@@ -81,7 +81,7 @@ public class SupportUnit extends com.fs.starfarer.api.combat.BaseHullMod {
         } else {
             // 不在危险中, 清除当前的指派
             if (clearCurrentAssignment(ship)) {
-                CombatLog.addLog(ship, Local.getString(Constant.COMBAT_LOG_RETURNING_TO_ACTION));
+                // CombatLog.addLog(ship, Local.getString(Constant.COMBAT_LOG_RETURNING_TO_ACTION));
                 ship.removeCustomData(Constant.SUPPORT_UNIT_LAST_ALLY);
             }
         }

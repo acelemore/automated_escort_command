@@ -203,12 +203,16 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin {
             }
         }
         
+        if (canEscorts.isEmpty() || needEscorts.isEmpty()) {
+            return;
+        }
+
         // 排序：需要护卫的按缺口从大到小排序（按优先级排序）
         needEscorts.sort((a, b) -> Integer.compare(b.third, a.third));
         
         // 排序：可以护卫的按分数从大到小排序（优先分配高分护卫）
         canEscorts.sort((a, b) -> Integer.compare(b.second, a.second));
-        
+
         // LOGGER.info("Found " + needEscorts.size() + " ships need escort, " + canEscorts.size() + " ships can escort");
         
         // 处理护卫分配 - 每次循环只为每艘需要护卫的船分配一个最佳候选
@@ -287,7 +291,7 @@ public class AutomatedEscortCombatPlugin implements EveryFrameCombatPlugin {
                     // 如果现有护卫队伍中已有更大的舰船，保持现有类型
                     boolean hasLargerShip = false;
                     for (var member : currentAssignmentInfo.getAssignedMembers()) {
-                        if (member.getShip().getHullSize().ordinal() >= desireType.ordinal()) {
+                        if (member.getShip().getHullSize().ordinal() >= escortShip.getHullSize().ordinal()) {
                             hasLargerShip = true;
                             break;
                         }
